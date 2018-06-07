@@ -9,6 +9,10 @@ numpy = "*"
 opencv-python = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-flask = "*"
+pytest-cov = "*"
+coveralls = "*"
 
 [requires]
 python_version = "3.6"
