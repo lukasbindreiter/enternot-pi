@@ -1,7 +1,8 @@
-from flask import Response
 import datetime
-import time
+import json
+
 import cv2
+from flask import Response, request, jsonify
 
 from enternot_app import app, camera
 
@@ -31,3 +32,27 @@ def frame_generator(camera):
         yield frame_separator + new_line + frame_packet + new_line + new_line + frame + new_line
 
         camera.wait_for_next_frame()
+
+
+@app.route("/notification-toggle", methods=["POST"])
+def notification_toggle():
+    """
+    Endpoint to toggle the sending of push notifications upon movement detected
+
+    Expects POST request in the form of:
+    {'notifications': 'true'}
+    where the value can either be 'true' or 'false'
+
+    Returns:
+
+    """
+    try:
+        data = request.json
+        send_notifications = json.loads(data["notifications"])
+        if not isinstance(send_notifications, bool):
+            raise ValueError()
+
+        camera.notifications = send_notifications
+        return jsonify(notifications=camera.notifications)
+    except (KeyError, json.JSONDecodeError, ValueError, TypeError):
+        return Response(status=400)  # Bad Request

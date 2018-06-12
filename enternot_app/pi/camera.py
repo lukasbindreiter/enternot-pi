@@ -10,6 +10,8 @@ class Camera:
     def __init__(self):
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
+        self.notifications = True
+
         self._condition = Condition()
         self._thread = Thread(target=self._capture_loop,
                               name="Camera-Capture-Thread",

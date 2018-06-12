@@ -1,9 +1,9 @@
 import pytest
 
-from enternot_app import app as flask_app
+from enternot_app import app as flask_app, camera as pi_camera
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def app(request):
     app = flask_app
     app.config["DEBUG"] = True
@@ -21,6 +21,6 @@ def app(request):
     return app
 
 
-@pytest.fixture()
-def myfixture():
-    return "this is my fixture!!"
+@pytest.fixture(scope="session")
+def camera():
+    return pi_camera
