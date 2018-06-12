@@ -2,3 +2,4 @@
 *.pyc
 .coverage
 .pytest_cache
+enternot_app/secret.py

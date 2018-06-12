@@ -4,7 +4,7 @@ import json
 import cv2
 from flask import Response, request, jsonify
 
-from enternot_app import app, camera
+from enternot_app import app, camera, firebase
 
 
 @app.route("/")
@@ -52,7 +52,7 @@ def notification_toggle():
         if not isinstance(send_notifications, bool):
             raise ValueError()
 
-        camera.notifications = send_notifications
+        firebase.notifications = send_notifications
         return jsonify(notifications=camera.notifications)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError):
         return Response(status=400)  # Bad Request
