@@ -8,6 +8,7 @@ flask = "*"
 numpy = "*"
 opencv-python = "*"
 pyfcm = "*"
+flask-basicauth = "*"
 
 [dev-packages]
 pytest = "*"

@@ -1,11 +1,15 @@
 from flask import Flask
 
+from flask_basicauth import BasicAuth
+
+from enternot_app.auth import init_auth
 from enternot_app.firebase import Firebase
 from enternot_app.pi.camera import Camera
 
 
 def create_app():
     app = Flask("enternot_app")
+    init_auth(app)
     return app
 
 

@@ -10,7 +10,7 @@ def get_api_key():
     try:
         from enternot_app.secret import FIREBASE_API_KEY as api_key
     except ImportError:
-        api_key = os.getenv("FIREBASE_API_KEY")
+        api_key = os.getenv("ENTERNOT_FIREBASE_API_KEY")
     return api_key
 
 
