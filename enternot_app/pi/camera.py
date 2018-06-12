@@ -1,11 +1,20 @@
 import time
 from threading import Thread, Condition
+from threading import Thread, Condition
+import cv2
 
 import numpy as np
 
 from enternot_app import Firebase
+try:
+    # todo, replace pycamera with real library name
+    import pycamera
+except ImportError:
+    pycamera = None
 
-FRAME_SIZE = (90 * 2, 160 * 2)
+import numpy as np
+
+FRAME_SIZE = (768, 1024)
 FRAME_RATE = 4  # 4 FPS = 1 frame every 250 ms
 
 
@@ -48,6 +57,11 @@ class Camera:
                 time.sleep(to_sleep)
 
     def _capture_frame(self):
-        self._frame = np.random.randint(256, size=FRAME_SIZE + (3,), dtype=np.uint8)
+        # if not running on the raspi:
+        if pycamera is None:
+            self._frame = np.random.randint(256, size=FRAME_SIZE + (3,), dtype=np.uint8)
+        else:   # running on the raspi:
+            # capture it
+            self._frame = None
         movement_detected = False  # TODO
         return movement_detected
