@@ -22,9 +22,7 @@ def camera_feed():
 
 def frame_generator(camera):
     while True:
-        print("Next frame")
-        camera.capture_frame()
-        frame = cv2.imencode(".jpg", camera.get_current_frame())[1].tobytes()
+        frame = cv2.imencode(".jpg", camera.frame)[1].tobytes()
 
         new_line = b"\r\n"
         frame_separator = b"--frame"
@@ -32,4 +30,4 @@ def frame_generator(camera):
 
         yield frame_separator + new_line + frame_packet + new_line + new_line + frame + new_line
 
-        time.sleep(0.5)
+        camera.wait_for_next_frame()
