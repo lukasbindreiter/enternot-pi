@@ -8,7 +8,7 @@ info:
     name: MIT
     url: https://opensource.org/licenses/MIT
 
-basePath: /
+basePath: "/"
 
 schemes:
 - http
@@ -19,7 +19,7 @@ paths:
       tags:
         - server status
       summary: Test if the server is up and running
-      description: Aliases for this are: /index and /
+      description: "Aliases for this are: /index and /"
       produces:
         - applications/json
       responses:

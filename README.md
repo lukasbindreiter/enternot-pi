@@ -4,6 +4,9 @@ Enternot is a home security system powered by the Raspberry PI.
 
 Check out the corresponding Android client: [enternot-app](https://github.com/Shynixn/enternot-app).
 
+## API Documentation
+Documentation is provided by the `docs/swagger.yaml` file. You can view it using Swagger UI using [this link](http://petstore.swagger.io/)url=https://raw.githubusercontent.com/lukasbindreiter/enternot-pi/master/docs/swagger.yaml)
+
 ## Build status
 
 | Branch        | Status        | Information |
