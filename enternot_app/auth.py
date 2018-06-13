@@ -1,7 +1,8 @@
-import os
-from flask_basicauth import BasicAuth
-from flask import current_app
 import hashlib
+import os
+
+from flask import current_app
+from flask_basicauth import BasicAuth
 
 
 class BcryptBasicAuth(BasicAuth):
@@ -24,10 +25,11 @@ def init_auth(app):
         from enternot_app.secret import BASIC_AUTH_USER, BASIC_AUTH_HASHED_PW
     except ImportError:
         BASIC_AUTH_USER = os.getenv("ENTERNOT_BASIC_AUTH_USER")
-        BASIC_AUTH_HASHED_PW = os.getenv("ENTERNOT_BASIC_AUTH_HASHED_PW").encode("ascii")
+        BASIC_AUTH_HASHED_PW = os.getenv("ENTERNOT_BASIC_AUTH_HASHED_PW")
 
     if BASIC_AUTH_USER is None or BASIC_AUTH_HASHED_PW is None:
-        print("Warning: Basic Auth username or password not found. Basic Auth will be disabled")
+        print(
+            "Warning: Basic Auth username or password not found. Basic Auth will be disabled")
     else:
         app.config["BASIC_AUTH_USERNAME"] = BASIC_AUTH_USER
         app.config["BASIC_AUTH_PASSWORD_HASH"] = BASIC_AUTH_HASHED_PW

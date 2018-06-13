@@ -1,0 +1,66 @@
+swagger: "2.0"
+
+info:
+  description: "Enternot is a home security system powered by the Raspberry PI."
+  version: "0.0.1"
+  title: "Enternot PI"
+  license:
+    name: "MIT"
+    url: "https://opensource.org/licenses/MIT"
+
+basePath: "/"
+
+schemes:
+- "http"
+
+paths:
+  /status:
+    get:
+      tags:
+        - server status
+      summary: "Test if the server is up and running"
+      description: "Aliases for this are: /index and /"
+      produces:
+        - "applications/json"
+      responses:
+          200:
+            description: "OK"        
+            schema:
+              $ref: "#/definitions/Status"
+          401:
+            description: "Unauthorized Provide. Basic Authentication header."
+      examples:
+        application/json:
+          schema:
+            type: object
+            propertiers:
+              status:
+                type: string
+                description: Message from the server
+                example: "ASDF"
+              server_time:
+                type: string
+                description: Current server time
+  /camera/stream:
+    get:
+      tags:
+        - camera
+      summary: "Live stream of the webcam"
+      produces:
+      - "multipart/x-mixed-replace"
+      responses:
+          200:
+            description: "OK"
+          401:
+            description: "Unauthorized Provide. Basic Authentication header."
+
+definitions:
+  Status:
+    type: object
+    properties:
+      status:
+        type: string
+        example: "Enternot is up and running!"
+      server_time:
+        type: string
+        example: "Wed, 13 Jun 2018 19:13:34 GMT"

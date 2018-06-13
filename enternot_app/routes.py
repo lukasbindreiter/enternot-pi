@@ -12,10 +12,10 @@ from enternot_app import app, camera, firebase
 @app.route("/status")
 def index():
     now = datetime.datetime.now()
-    return "Enternot is up and running! Current server time: {}".format(now)
+    return jsonify(status="Enternot is up and running!", server_time=now)
 
 
-@app.route("/camera-feed")
+@app.route("/camera/stream")
 def camera_feed():
     return Response(frame_generator(camera),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
@@ -53,6 +53,6 @@ def notification_toggle():
             raise ValueError()
 
         firebase.notifications = send_notifications
-        return jsonify(notifications=camera.notifications)
+        return jsonify(notifications=firebase.notifications)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError):
         return Response(status=400)  # Bad Request
