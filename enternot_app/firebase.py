@@ -1,4 +1,3 @@
-import os
 import time
 
 from pyfcm import FCMNotification
@@ -14,34 +13,17 @@ PUSH_NOTIFICATION_INTERVAL = 5 * 60
 MIN_DISTANCE_FOR_NOTIFICATIONS = 500
 
 
-def get_api_key():
-    try:
-        from enternot_app.secret import FIREBASE_API_KEY as api_key
-    except ImportError:
-        api_key = os.getenv("ENTERNOT_FIREBASE_API_KEY")
-    return api_key
-
-
-def get_pi_location():
-    try:
-        from enternot_app.secret import PI_LONGITUDE as pi_lon, \
-            PI_LATITUDE as pi_lat
-    except ImportError:
-        pi_lon = None
-        pi_lat = None
-    return pi_lon, pi_lat
-
-
 class Firebase:
-    def __init__(self):
-        api_key = get_api_key()
+    def __init__(self, app):
+        self.app = app
+        api_key = self._get_api_key()
         if api_key is not None:
-            self.push_service = FCMNotification(api_key=get_api_key())
+            self.push_service = FCMNotification(api_key=api_key)
         self.last_send_time = None
         self.notifications = True
 
     def toggle_notifications_based_on_distance(self, lon, lat):
-        distance_meters = calculate_distance(lon, lat, *get_pi_location())
+        distance_meters = calculate_distance(lon, lat, *self._get_pi_location())
 
         if distance_meters is None:
             return -1
@@ -66,3 +48,11 @@ class Firebase:
                 message_title=title)
         else:
             print("Skipped sending push notification, API key not provided!")
+
+    def _get_api_key(self):
+        return self.app.config["FIREBASE_API_KEY"]
+
+    def _get_pi_location(self):
+        lon = self.app.config["PI_LONGITUDE"]
+        lat = self.app.config["PI_LATITUDE"]
+        return lon, lat

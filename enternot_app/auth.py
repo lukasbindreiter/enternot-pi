@@ -1,5 +1,4 @@
 import hashlib
-import os
 
 from flask import current_app
 from flask_basicauth import BasicAuth
@@ -10,8 +9,12 @@ class BcryptBasicAuth(BasicAuth):
         """
         Check if the given username and password are correct.
         """
-        correct_username = current_app.config['BASIC_AUTH_USERNAME']
-        correct_password_hash = current_app.config['BASIC_AUTH_PASSWORD_HASH']
+        correct_username = current_app.config['BASIC_AUTH_USER']
+        correct_password_hash = current_app.config['BASIC_AUTH_HASHED_PW']
+
+        # check if basic auth is enabled:
+        if correct_username is None and correct_password_hash is None:
+            return True
 
         md5 = hashlib.md5()
         md5.update(password.encode("ascii"))
@@ -21,17 +24,5 @@ class BcryptBasicAuth(BasicAuth):
 
 
 def init_auth(app):
-    try:
-        from enternot_app.secret import BASIC_AUTH_USER, BASIC_AUTH_HASHED_PW
-    except ImportError:
-        BASIC_AUTH_USER = os.getenv("ENTERNOT_BASIC_AUTH_USER")
-        BASIC_AUTH_HASHED_PW = os.getenv("ENTERNOT_BASIC_AUTH_HASHED_PW")
-
-    if BASIC_AUTH_USER is None or BASIC_AUTH_HASHED_PW is None:
-        print(
-            "Warning: Basic Auth username or password not found. Basic Auth will be disabled")
-    else:
-        app.config["BASIC_AUTH_USERNAME"] = BASIC_AUTH_USER
-        app.config["BASIC_AUTH_PASSWORD_HASH"] = BASIC_AUTH_HASHED_PW
-        app.config["BASIC_AUTH_FORCE"] = True
-        basic_auth = BcryptBasicAuth(app)
+    app.config["BASIC_AUTH_FORCE"] = True
+    BcryptBasicAuth(app)

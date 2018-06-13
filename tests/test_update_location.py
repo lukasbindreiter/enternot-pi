@@ -5,8 +5,9 @@ from enternot_app import Firebase
 
 
 def test_notification_toggle(client: FlaskClient, firebase: Firebase):
+    # mock the _get_pi_location method:
     pi_pos = (14.320049, 48.338040)
-    firebase.get_pi_location = lambda: pi_pos
+    firebase._get_pi_location = lambda: pi_pos
 
     pos = dict(longitude=14.323905, latitude=48.334953)
     data = json.dumps({"location": pos})
