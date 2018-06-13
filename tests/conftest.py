@@ -9,6 +9,8 @@ from enternot_app import firebase as _firebase
 def app(request):
     _app.config["DEBUG"] = True
     _app.config["TESTING"] = True
+    # disable authentication for tests
+    _app.config["BASIC_AUTH_FORCE"] = False
 
     # Establish an application context before running the tests.
     ctx = _app.app_context()

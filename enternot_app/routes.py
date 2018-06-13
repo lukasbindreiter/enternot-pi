@@ -34,25 +34,22 @@ def frame_generator(camera):
         camera.wait_for_next_frame()
 
 
-@app.route("/notification-toggle", methods=["POST"])
-def notification_toggle():
+@app.route("/location", methods=["POST"])
+def update_location():
     """
-    Endpoint to toggle the sending of push notifications upon movement detected
-
-    Expects POST request in the form of:
-    {'notifications': 'true'}
-    where the value can either be 'true' or 'false'
-
-    Returns:
-
+    Endpoint to update the pi about a users location. Based on this data,
+    push notifications will be turned off.
     """
     try:
         data = request.json
-        send_notifications = json.loads(data["notifications"])
-        if not isinstance(send_notifications, bool):
-            raise ValueError()
+        user_lon = data["location"]["longitude"]
+        user_lat = data["location"]["latitude"]
+        if not isinstance(user_lon, float) or not isinstance(user_lat, float):
+            raise TypeError()
 
-        firebase.notifications = send_notifications
-        return jsonify(notifications=firebase.notifications)
+        distance = firebase.toggle_notifications_based_on_distance(user_lon,
+                                                                   user_lat)
+
+        return jsonify(notifications=firebase.notifications, distance=distance)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError):
         return Response(status=400)  # Bad Request

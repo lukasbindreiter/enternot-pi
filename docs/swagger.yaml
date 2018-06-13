@@ -1,3 +1,4 @@
+---
 swagger: "2.0"
 
 info:
@@ -11,7 +12,7 @@ info:
 basePath: "/"
 
 schemes:
-- http
+- "http"
 
 paths:
   /status:
@@ -21,7 +22,7 @@ paths:
       summary: "Test if the server is up and running"
       description: "Aliases for this are: /index and /"
       produces:
-        - application/json
+        - "application/json"
       responses:
           200:
             description: "OK"
@@ -32,25 +33,76 @@ paths:
   /camera/stream:
     get:
       tags:
-        - camera
+        - "camera"
       summary: "Live stream of the webcam"
       produces:
-      - multipart/x-mixed-replace
+      - "multipart/x-mixed-replace"
       responses:
           200:
             description: "OK"
           401:
             description: "Unauthorized. Provide Basic Authentication header."
+  /location:
+    post:
+      tags:
+        - "notifications"
+      summary: "Enable / Disable push notifications based on distance to the pi"
+      description: "If user is more than 500 meters away from the pi, push notifications will be enabled, otherwise disabled."
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Location of the user"
+        required: true
+        schema:
+          $ref: "#/definitions/Location"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/LocationResponse"
+        400:
+          description: "Bad request. Request body not valid json."
+        401:
+          description: "Unauthorized. Provide Basic Authentication header."
+
+      
 
 definitions:
   Status:
-    type: object
+    type: "object"
     properties:
       status:
-        type: string
+        type: "string"
         description: "Message from the server"
         example: "Enternot is up and running!"
       server_time:
-        type: string
+        type: "string"
         description: "Current server time"
         example: "Wed, 13 Jun 2018 19:13:34 GMT"
+  Location:
+    type: "object"
+    properties:
+      location:
+        type: "object"
+        properties:
+          longitude:
+            type: "number"
+            example: 14.320049
+          latitude:
+            type: "number"
+            example: 48.338040
+  LocationResponse:
+    type: "object"
+    properties:
+      notifications:
+        type: "boolean"
+        description: "Whether or not notifications are turned on"
+        example: "true"
+      distance:
+        type: "number"
+        description: "Distance to the pi, in meters"
+        example: 446.34
