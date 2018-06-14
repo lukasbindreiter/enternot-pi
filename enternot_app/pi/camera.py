@@ -1,22 +1,19 @@
 import time
 from threading import Thread, Condition
 import cv2
+import numpy as np
 
 try:
     import Adafruit_PCA9685
 except ImportError:
     motorlib = None
 
-import numpy as np
-
-from enternot_app import Firebase
 try:
-    # todo, replace pycamera with real library name
     from picamera import PiCamera
 except ImportError:
-    pycamera = None
+    PiCamera = None
 
-import numpy as np
+from enternot_app import Firebase
 
 FRAME_SIZE = (768, 1024)
 FRAME_RATE = 4  # 4 FPS = 1 frame every 250 ms
@@ -25,26 +22,27 @@ LEFTRIGHT_MOTOR = 0
 UPDOWN_MOTOR = 3
 
 
-
-
 class Camera:
     def __init__(self, firebase: Firebase = None):
-        #init camera
-        self._camera = PiCamera()
-        self._camera.resolution = (1024, 768)
-        self._camera.start_preview()
-        self._detect_motion = True
+        self._firebase = firebase
+        # init camera
+        if PiCamera is None:
+            print("Pi camera not detected!")
+            self._camera = None
+        else:
+            self._camera = PiCamera()
+            self._camera.resolution = (1024, 768)
+            self._camera.start_preview()
+            self._detect_motion = True
 
-        #init camera motor
+        # init camera motor
         if motorlib is None:
             print("lib for motor is missing")
         else:
             self._pwm = Adafruit_PCA9685.PCA9685()
 
-
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
-        self._firebase = firebase
 
         self._condition = Condition()
         self._thread = Thread(target=self._capture_loop,
@@ -80,9 +78,9 @@ class Camera:
 
     def _capture_frame(self):
         # if not running on the raspi:
-        if pycamera is None:
+        if self._camera is None:
             self._frame = np.random.randint(256, size=FRAME_SIZE + (3,), dtype=np.uint8)
-        else:   # running on the raspi:
+        else:  # running on the raspi:
             # capture it
             self._camera.capture(IMG_PATH)
             self._frame = cv2.read(IMG_PATH)
