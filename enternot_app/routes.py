@@ -21,6 +21,23 @@ def camera_feed():
                     mimetype="multipart/x-mixed-replace; boundary=frame")
 
 
+@app.route("/camera/position", methods=["POST"])
+def camera_position():
+    try:
+        data = request.json
+        angle = data["angle"]
+        if not isinstance(angle, (float, int)):
+            raise TypeError()
+        if not 0 <= angle <= 360:
+            raise ValueError()
+
+        camera.move_to(angle)
+
+        return Response(status=200)
+    except (KeyError, json.JSONDecodeError, ValueError, TypeError) as err:
+        return Response(status=400)  # Bad Request
+
+
 def frame_generator(camera):
     while True:
         frame = cv2.imencode(".jpg", camera.frame)[1].tobytes()

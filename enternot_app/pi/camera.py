@@ -1,15 +1,16 @@
-import numpy as np
-from threading import Thread, Condition
 import time
+from threading import Thread, Condition
 
-from enternot_app.firebase import Firebase
+import numpy as np
+
+from enternot_app import Firebase
 
 FRAME_SIZE = (90 * 2, 160 * 2)
 FRAME_RATE = 4  # 4 FPS = 1 frame every 250 ms
 
 
 class Camera:
-    def __init__(self, firebase = None):
+    def __init__(self, firebase: Firebase = None):
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
         self._firebase = firebase
@@ -27,6 +28,10 @@ class Camera:
     def wait_for_next_frame(self):
         with self._condition:
             self._condition.wait()
+
+    def move_to(self, angle):
+        # initiate movement to the given view angle
+        pass
 
     def _capture_loop(self):
         while True:
