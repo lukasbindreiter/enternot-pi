@@ -4,7 +4,7 @@ from flask import current_app
 from flask_basicauth import BasicAuth
 
 
-class BcryptBasicAuth(BasicAuth):
+class MD5BasicAuth(BasicAuth):
     def check_credentials(self, username, password):
         """
         Check if the given username and password are correct.
@@ -25,4 +25,4 @@ class BcryptBasicAuth(BasicAuth):
 
 def init_auth(app):
     app.config["BASIC_AUTH_FORCE"] = True
-    BcryptBasicAuth(app)
+    MD5BasicAuth(app)
