@@ -42,6 +42,27 @@ paths:
             description: "OK"
           401:
             description: "Unauthorized. Provide Basic Authentication header."
+  /camera/position:
+    post:
+      tags:
+        - "camera"
+      summary: "Set the viewing angle of the camera"
+      consumes:
+        - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "The new viewing angle for the camera"
+        required: true
+        schema:
+          $ref: "#/definitions/Angle"
+      responses:
+        200:
+          description: "OK"
+        400:
+          description: "Bad request. Request body not valid json."
+        401:
+          description: "Unauthorized. Provide Basic Authentication header."
   /location:
     post:
       tags:
@@ -106,3 +127,10 @@ definitions:
         type: "number"
         description: "Distance to the pi, in meters"
         example: 446.34
+  Angle:
+    type: "object"
+    properties:
+      angle:
+        type: "number"
+        description: "Angle in degrees, from 0 to 360"
+        example: 12.5
