@@ -30,10 +30,9 @@ class Camera:
             print("Pi camera not detected!")
             self._camera = None
         else:
-            self._camera = 1
-            # self._camera = PiCamera()
-            # self._camera.resolution = (1024, 768)
-            # self._detect_motion = True
+            self._camera = PiCamera()
+            self._camera.resolution = (1024, 768)
+            self._detect_motion = True
 
         # init camera motor
         if Adafruit_PCA9685 is None:
@@ -83,7 +82,7 @@ class Camera:
                                             dtype=np.uint8)
         else:  # running on the raspi:
             # capture it
-            # self._camera.capture(IMG_PATH)
+            self._camera.capture(IMG_PATH)
             self._frame = cv2.imread(IMG_PATH)
         movement_detected = False  # TODO
         return movement_detected
