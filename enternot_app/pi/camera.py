@@ -6,7 +6,7 @@ import numpy as np
 try:
     import Adafruit_PCA9685
 except ImportError:
-    motorlib = None
+    Adafruit_PCA9685 = None
 
 try:
     from picamera import PiCamera
@@ -32,11 +32,10 @@ class Camera:
         else:
             self._camera = PiCamera()
             self._camera.resolution = (1024, 768)
-            self._camera.start_preview()
             self._detect_motion = True
 
         # init camera motor
-        if motorlib is None:
+        if Adafruit_PCA9685 is None:
             print("lib for motor is missing")
         else:
             self._pwm = Adafruit_PCA9685.PCA9685()
