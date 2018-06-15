@@ -17,7 +17,7 @@ from enternot_app import Firebase
 
 FRAME_SIZE = (768, 1024)
 FRAME_RATE = 4  # 4 FPS = 1 frame every 250 ms
-IMG_PATH = 'image.jpg'
+IMG_PATH = 'frame.jpg'
 LEFTRIGHT_MOTOR = 0
 UPDOWN_MOTOR = 3
 

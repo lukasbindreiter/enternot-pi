@@ -16,7 +16,7 @@ def calculate_distance(lon1: float, lat1: float, lon2: float,
         Distance in meters
 
     """
-    earth_radius = 6_371_000  # meters
+    earth_radius = 6371000  # meters
 
     delta_lon = radians(lon2 - lon1)
     delta_lat = radians(lat2 - lat1)
