@@ -25,18 +25,42 @@ def camera_feed():
 def camera_position():
     try:
         data = request.json
-        angle = data["angle"]
-        if not isinstance(angle, (float, int)):
-            raise TypeError()
-        if not 0 <= angle <= 360:
-            raise ValueError()
+        x_angle = None
+        y_angle = None
+        try:
+            x_angle = data["x-angle"]
+        except KeyError:
+            pass
 
-        camera.accumulate_angle(angle, 1)
-        print("move to angle {}".format(angle))
+        try:
+            y_angle = data["y-angle"]
+        except KeyError:
+            pass
 
-        return Response(status=200)
+        if x_angle is None and y_angle is None:
+            raise ValueError("Must specify at least x or y angle")
+
+        for angle, angle_name in [(x_angle, "x-angle"), (y_angle, "y-angle")]:
+            if angle is None:
+                continue
+            if not isinstance(angle, (float, int)):
+                raise TypeError(
+                    "{} must be float or int value".format(angle_name))
+            if not -180 <= angle <= 180:
+                raise ValueError(
+                    "{} must be between -180 and 180".format(angle_name))
+
+        if x_angle is not None:
+            camera.accumulate_angle(x_angle, 1)
+
+        if y_angle is not None:
+            camera.accumulate_angle(y_angle, 2)
+
+        return jsonify(message="Movement initiated!")
     except (KeyError, json.JSONDecodeError, ValueError, TypeError) as err:
-        return Response(status=400)  # Bad Request
+        response = jsonify(error=str(err))
+        response.status_code = 400
+        return response
 
 
 def frame_generator(camera):

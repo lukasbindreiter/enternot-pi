@@ -46,13 +46,13 @@ paths:
     post:
       tags:
         - "camera"
-      summary: "Set the viewing angle of the camera"
+      summary: "Move the camera by the specified angles around an axis."
       consumes:
         - "application/json"
       parameters:
       - in: "body"
         name: "body"
-        description: "The new viewing angle for the camera"
+        description: "The amount that the viewing angle for the camera for the X and Y axis should be changed by."
         required: true
         schema:
           $ref: "#/definitions/Angle"
@@ -130,7 +130,11 @@ definitions:
   Angle:
     type: "object"
     properties:
-      angle:
+      x-angle:
         type: "number"
-        description: "Angle in degrees, from 0 to 360"
+        description: "X angle (left/right) in degrees, from -180 to 180"
         example: 12.5
+      y-angle:
+        type: "number"
+        description: "Y angle (left/right) in degrees, from -180 to 180"
+        example: -23.5
