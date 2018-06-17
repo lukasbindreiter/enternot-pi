@@ -3,6 +3,7 @@ import pytest
 from enternot_app import app as _app
 from enternot_app import camera as _camera
 from enternot_app import firebase as _firebase
+from enternot_app import speakers as _speakers
 
 
 @pytest.fixture(scope="session")
@@ -32,3 +33,8 @@ def camera():
 @pytest.fixture(scope="session")
 def firebase():
     return _firebase
+
+
+@pytest.fixture(scope="session")
+def speakers():
+    return _speakers

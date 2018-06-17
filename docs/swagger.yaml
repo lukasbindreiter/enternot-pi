@@ -89,10 +89,40 @@ paths:
           description: "Bad request. Request body not valid json."
         401:
           description: "Unauthorized. Provide Basic Authentication header."
-
-      
+  /siren/start:
+    post:
+      tags:
+        - "audio playback"
+      summary: "Start a playback of the siren sound for 3 minutes"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Message"
+        401:
+          description: "Unauthorized. Provide Basic Authentication header."
+  /siren/stop:
+    post:
+      tags:
+        - "audio playback"
+      summary: "Stop the siren playback if it is running at the moment."
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Message"
+        401:
+          description: "Unauthorized. Provide Basic Authentication header."      
 
 definitions:
+  Message:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+        description: "Some message from the server"
+        example: "some message"
+
   Status:
     type: "object"
     properties:

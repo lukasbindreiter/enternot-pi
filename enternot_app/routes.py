@@ -4,7 +4,7 @@ import json
 import cv2
 from flask import Response, request, jsonify
 
-from enternot_app import app, camera, firebase
+from enternot_app import app, camera, firebase, speakers
 
 
 @app.route("/")
@@ -95,3 +95,15 @@ def update_location():
         return jsonify(notifications=firebase.notifications, distance=distance)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError):
         return Response(status=400)  # Bad Request
+
+
+@app.route("/siren/start", methods=["POST"])
+def play_sirene():
+    duration = speakers.play_siren()
+    return jsonify(message="Siren playing for {} seconds!".format(duration))
+
+
+@app.route("/siren/stop", methods=["POST"])
+def stop_sirene():
+    speakers.stop_playback()
+    return jsonify(message="Siren playback stopped!")
