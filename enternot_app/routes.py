@@ -32,7 +32,7 @@ def camera_position():
             raise ValueError()
 
         camera.accumulate_angle(angle, 1)
-        print("move to angle {:d}".format(angle))
+        print("move to angle {}".format(angle))
 
         return Response(status=200)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError) as err:

@@ -38,24 +38,29 @@ class Camera:
             print("Camera initialized")
 
         # init camera motor
+        self._up_down_angle = 0
+        self._left_right_angle = 0
         if Adafruit_PCA9685 is None:
             print("lib for motor is missing")
             self._pwm = None
         else:
             self._pwm = Adafruit_PCA9685.PCA9685()
             self._pwm.set_pwm_freq(60)
-            self._up_down_angle = 0
-            self._left_right_angle = 0
             print("Motor initialized")
 
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
 
         self._condition = Condition()
-        self._thread = Thread(target=self._capture_loop,
-                              name="Camera-Capture-Thread",
-                              daemon=True)  # kill this thread when Flask thread exits
-        self._thread.start()
+        self._capture_thread = Thread(target=self._capture_loop,
+                                      name="Camera-Capture-Thread",
+                                      daemon=True)  # kill this thread when Flask thread exits
+        self._capture_thread.start()
+
+        self._move_thread = Thread(target=self._move_loop,
+                                   name="Camera-Move-Thread",
+                                   daemon=True)  # kill this thread when Flask thread exits
+        self._move_thread.start()
 
     @property
     def frame(self):
@@ -107,15 +112,15 @@ class Camera:
                 if self._up_down_angle >= MIN_ANGLE:
                     self._up_down_angle -= MIN_ANGLE
                     self.move(MIN_ANGLE, 2)
-                if self._up_down_angle <= MIN_ANGLE*-1:
+                if self._up_down_angle <= MIN_ANGLE * -1:
                     self._up_down_angle += MIN_ANGLE
-                    self.move(MIN_ANGLE*-1, 2)
+                    self.move(MIN_ANGLE * -1, 2)
                 if self._left_right_angle >= MIN_ANGLE:
                     self._left_right_angle -= MIN_ANGLE
                     self.move(MIN_ANGLE, 1)
-                if self._left_right_angle <= MIN_ANGLE*-1:
+                if self._left_right_angle <= MIN_ANGLE * -1:
                     self._left_right_angle += MIN_ANGLE
-                    self.move(MIN_ANGLE*-1, 2)
+                    self.move(MIN_ANGLE * -1, 2)
             time.sleep(0.5)
 
     def move(self, degrees, direction):
@@ -132,13 +137,15 @@ class Camera:
         else:
             pulse_value = 600
             if direction == 1:
-                #timeout for left
+                # timeout for left
                 timeout = 0.04
             else:
-                #timeout for up
+                # timeout for up
                 timeout = 0.029
         if self._pwm is None:
-            print("no motorlib: move index={:d} direction={:d} pulse={:d} timeout={:d}".format(motor_index, direction, pulse_value, timeout))
+            print(
+                "no motorlib: move index={:d} direction={:d} pulse={:d} timeout={:d}".format(
+                    motor_index, direction, pulse_value, timeout))
         else:
             self._detect_motion = False
             self._pwm.set_pwm(motor_index, 0, pulse_value)
