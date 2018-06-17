@@ -6,13 +6,15 @@ import numpy as np
 
 try:
     import Adafruit_PCA9685
+    motorlib = True
 except ImportError:
-    Adafruit_PCA9685 = None
+    motorlib = False
 
 try:
     from picamera import PiCamera
+    cameralib = True
 except ImportError:
-    PiCamera = None
+    cameralib = False
 
 from enternot_app import Firebase
 
@@ -28,25 +30,26 @@ class Camera:
     def __init__(self, firebase: Firebase = None):
         self._firebase = firebase
         # init camera
-        if PiCamera is None:
-            print("Pi camera not detected!")
-            self._camera = None
-        else:
+        if cameralib:
             self._camera = PiCamera()
             self._camera.resolution = (1024, 768)
+            self._camera.start_preview()
             self._detect_motion = True
-            print("Camera initialized")
+            print("camera initialized")
+        else:
+            print("Pi camera not detected!")
+            self._camera = None
 
         # init camera motor
-        self._up_down_angle = 0
-        self._left_right_angle = 0
-        if Adafruit_PCA9685 is None:
-            print("lib for motor is missing")
-            self._pwm = None
-        else:
+        if motorlib:
             self._pwm = Adafruit_PCA9685.PCA9685()
             self._pwm.set_pwm_freq(60)
-            print("Motor initialized")
+            self._up_down_angle = 0
+            self._left_right_angle = 0
+            print("motor initialized")
+        else:
+            print("lib for motor is missing")
+            self._pwm = None
 
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
@@ -61,6 +64,11 @@ class Camera:
                                    name="Camera-Move-Thread",
                                    daemon=True)  # kill this thread when Flask thread exits
         self._move_thread.start()
+
+        self._cameraThread = Thread(target=self._move_loop,
+                                    name="Camera-Move-Thread",
+                                    daemon=True)
+        self._cameraThread.start()
 
     @property
     def frame(self):
@@ -108,7 +116,6 @@ class Camera:
                 print("move loop")
                 pass
             else:
-                print("motorlib true")
                 if self._up_down_angle >= MIN_ANGLE:
                     self._up_down_angle -= MIN_ANGLE
                     self.move(MIN_ANGLE, 2)
