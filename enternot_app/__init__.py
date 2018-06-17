@@ -3,6 +3,7 @@ from flask import Flask
 from enternot_app.auth import init_auth
 from enternot_app.firebase import Firebase
 from enternot_app.pi.camera import Camera
+from enternot_app.pi.speakers import Speakers
 
 
 def create_app():
@@ -33,4 +34,5 @@ app = create_app()
 load_secrets(app)
 firebase = Firebase(app)
 camera = Camera(firebase)
+speakers = Speakers()
 from enternot_app import routes

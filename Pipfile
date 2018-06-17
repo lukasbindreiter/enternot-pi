@@ -9,6 +9,7 @@ numpy = "*"
 opencv-python = "*"
 pyfcm = "*"
 flask-basicauth = "*"
+pygame = "*"
 
 [dev-packages]
 pytest = "*"
