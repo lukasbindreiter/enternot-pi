@@ -1,19 +1,18 @@
 import time
 from threading import Thread, Condition
+
 import cv2
 import numpy as np
 
 try:
     import Adafruit_PCA9685
-    motorlib = True
 except ImportError:
-    motorlib = False
+    Adafruit_PCA9685 = None
 
 try:
     from picamera import PiCamera
-    cameralib = True
 except ImportError:
-    cameralib = False
+    PiCamera = None
 
 from enternot_app import Firebase
 
@@ -29,26 +28,25 @@ class Camera:
     def __init__(self, firebase: Firebase = None):
         self._firebase = firebase
         # init camera
-        if cameralib:
-            self._camera = PiCamera()
-            self._camera.resolution = (1024, 768)
-            self._camera.start_preview()
-            self._detect_motion = True
-            print("camera initialized")
-        else:
+        if PiCamera is None:
             print("Pi camera not detected!")
             self._camera = None
+        else:
+            self._camera = PiCamera()
+            self._camera.resolution = (1024, 768)
+            self._detect_motion = True
+            print("Camera initialized")
 
         # init camera motor
-        if motorlib:
+        if Adafruit_PCA9685 is None:
+            print("lib for motor is missing")
+            self._pwm = None
+        else:
             self._pwm = Adafruit_PCA9685.PCA9685()
             self._pwm.set_pwm_freq(60)
             self._up_down_angle = 0
             self._left_right_angle = 0
-            print("motor initialized")
-        else:
-            print("lib for motor is missing")
-            self._pwm = None
+            print("Motor initialized")
 
         # initialize frame to a black image
         self._frame = np.zeros(FRAME_SIZE + (3,), np.uint8)
@@ -59,11 +57,6 @@ class Camera:
                               daemon=True)  # kill this thread when Flask thread exits
         self._thread.start()
 
-        self._cameraThread = Thread(target=self._move_loop,
-                                    name="Camera-Move-Thread",
-                                    daemon=True)
-        self._cameraThread.start()
-
     @property
     def frame(self):
         return self._frame
@@ -71,7 +64,6 @@ class Camera:
     def wait_for_next_frame(self):
         with self._condition:
             self._condition.wait()
-
 
     def _capture_loop(self):
         while True:
@@ -90,11 +82,12 @@ class Camera:
     def _capture_frame(self):
         # if not running on the raspi:
         if self._camera is None:
-            self._frame = np.random.randint(256, size=FRAME_SIZE + (3,), dtype=np.uint8)
+            self._frame = np.random.randint(256, size=FRAME_SIZE + (3,),
+                                            dtype=np.uint8)
         else:  # running on the raspi:
             # capture it
             self._camera.capture(IMG_PATH)
-            self._frame = cv2.read(IMG_PATH)
+            self._frame = cv2.imread(IMG_PATH)
         movement_detected = False  # TODO
         return movement_detected
 
