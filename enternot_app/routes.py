@@ -31,7 +31,8 @@ def camera_position():
         if not 0 <= angle <= 360:
             raise ValueError()
 
-        camera.move_to(angle)
+        camera.accumulate_angle(angle, 1)
+        print("move to angle {:d}".format(angle))
 
         return Response(status=200)
     except (KeyError, json.JSONDecodeError, ValueError, TypeError) as err:
