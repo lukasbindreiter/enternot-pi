@@ -29,6 +29,7 @@ class Firebase:
             return -1
 
         self.notifications = (distance_meters > MIN_DISTANCE_FOR_NOTIFICATIONS)
+        print("Notifications turned {}!".format("on" if self.notifications else "off"))
         return distance_meters
 
     def send_movement_push_notification(self):
