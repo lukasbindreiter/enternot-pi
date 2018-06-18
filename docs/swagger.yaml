@@ -113,6 +113,29 @@ paths:
             $ref: "#/definitions/Message"
         401:
           description: "Unauthorized. Provide Basic Authentication header."      
+  /audio/stream:
+    post:
+      tags:
+        - "audio playback"
+      summary: "Play recorded voice on the pis speakers"
+      description: "The sample rate is 16000/s, channels: stereo, 16bit PCM"
+      consumes:
+        - "application/octet-stream"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Location of the user"
+        required: true
+        schema:
+          type: "array"
+          example: "raw byte stream"
+      responses:
+        200:
+          description: "OK"
+          schema:
+            $ref: "#/definitions/Message"
+        401:
+          description: "Unauthorized. Provide Basic Authentication header."
 
 definitions:
   Message:
