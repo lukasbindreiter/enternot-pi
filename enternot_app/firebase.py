@@ -23,13 +23,15 @@ class Firebase:
         self.notifications = True
 
     def toggle_notifications_based_on_distance(self, lon, lat):
-        distance_meters = calculate_distance(lon, lat, *self._get_pi_location())
+        distance_meters = calculate_distance(lon, lat,
+                                             *self._get_pi_location())
 
         if distance_meters is None:
             return -1
 
         self.notifications = (distance_meters > MIN_DISTANCE_FOR_NOTIFICATIONS)
-        print("Notifications turned {}!".format("on" if self.notifications else "off"))
+        print("Notifications turned {}!".format(
+            "on" if self.notifications else "off"))
         return distance_meters
 
     def send_movement_push_notification(self):

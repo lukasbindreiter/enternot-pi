@@ -22,7 +22,7 @@ except ImportError:
 
 from enternot_app import Firebase
 
-FRAME_SIZE = (768, 1024)
+FRAME_SIZE = (384, 512)
 FRAME_RATE = 4  # 4 FPS = 1 frame every 250 ms
 IMG_PATH = 'frame.jpg'
 LEFTRIGHT_MOTOR = 0
