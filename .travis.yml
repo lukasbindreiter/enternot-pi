@@ -4,7 +4,6 @@ python:
   - "3.6"
 # command to install dependencies
 install:
-  - apt-get install portaudio19-dev
   - pip install pipenv
   - pipenv install --dev
 # command to run tests

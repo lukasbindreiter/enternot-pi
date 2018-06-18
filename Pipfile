@@ -11,7 +11,6 @@ pyfcm = "*"
 flask-basicauth = "*"
 pygame = "*"
 pydub = "*"
-pyaudio = "*"
 
 [dev-packages]
 pytest = "*"
