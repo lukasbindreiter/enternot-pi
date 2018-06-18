@@ -10,6 +10,7 @@ opencv-python = "*"
 pyfcm = "*"
 flask-basicauth = "*"
 pygame = "*"
+pydub = "*"
 
 [dev-packages]
 pytest = "*"
