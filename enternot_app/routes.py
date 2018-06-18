@@ -2,7 +2,7 @@ import datetime
 import json
 
 import cv2
-from flask import Response, request, jsonify
+from flask import Response, request, jsonify, render_template
 
 from enternot_app import app, camera, firebase, speakers
 
@@ -15,10 +15,14 @@ def index():
     return jsonify(status="Enternot is up and running!", server_time=now)
 
 
-@app.route("/camera/stream")
+@app.route("/camera/live")
 def camera_feed():
     return Response(frame_generator(camera),
                     mimetype="multipart/x-mixed-replace; boundary=frame")
+
+@app.route("/camera/stream")
+def camera_live():
+    return render_template("camera.html")
 
 
 @app.route("/camera/position", methods=["POST"])
