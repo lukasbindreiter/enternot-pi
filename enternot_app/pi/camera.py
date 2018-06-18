@@ -108,8 +108,9 @@ class Camera:
     def _capture_frame(self):
         # if not running on the raspi:
         if self._camera is None:
-            self._frame = np.random.randint(256, size=FRAME_SIZE + (3,),
-                                            dtype=np.uint8)
+            self._frame = np.zeros(shape=FRAME_SIZE + (3,), dtype=np.uint8)
+            self._frame[:, :] = np.random.randint(256, size=(3,),
+                                                  dtype=np.uint8)
         else:  # running on the raspi:
             # capture it
             self._camera.capture(IMG_PATH)
