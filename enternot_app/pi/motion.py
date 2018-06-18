@@ -4,7 +4,7 @@ import numpy as np
 class MotionDetector:
     def __init__(self):
         self.motion = []
-        self.last_frame = None
+        self._last_frame = None
 
     def analyze_frame(self, frame):
         """
@@ -13,7 +13,7 @@ class MotionDetector:
         Args:
             frame: The new frame to analyze
         """
-        if self.last_frame is not None:
+        if self._last_frame is not None:
             motion = self._detect_motion(self._last_frame, frame)
             self.motion.append(motion)
             # if the motion array gets too large, keep only the last
@@ -21,7 +21,7 @@ class MotionDetector:
             if len(self.motion) > 200:
                 self.motion = self.motion[-20:]
 
-        self.last_frame = frame
+        self._last_frame = frame
 
     def motion_detected(self, n_frames=10):
         """
