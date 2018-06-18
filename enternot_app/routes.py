@@ -1,5 +1,6 @@
 import datetime
 import json
+import pickle
 
 import cv2
 from flask import Response, request, jsonify
@@ -107,3 +108,20 @@ def play_sirene():
 def stop_sirene():
     speakers.stop_playback()
     return jsonify(message="Siren playback stopped!")
+
+
+@app.route("/audio/stream", methods=["POST"])
+def play_audio_stream():
+    try:
+        if request.headers["Content-Type"] != "application/octet-stream":
+            raise ValueError(
+                "Content must be of type application/octet-stream")
+
+        data = request.data
+        speakers.play_byte_stream(data)
+
+        return jsonify(message="Voice message is playing!")
+    except (KeyError, ValueError) as err:
+        response = jsonify(error=str(err))
+        response.status_code = 400
+        return response
