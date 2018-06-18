@@ -4,14 +4,18 @@ from threading import Thread, Condition
 import cv2
 import numpy as np
 
+from enternot_app.pi.motion import MotionDetector
+
 try:
     import Adafruit_PCA9685
+
     motorlib = True
 except ImportError:
     motorlib = False
 
 try:
     from picamera import PiCamera
+
     cameralib = True
 except ImportError:
     cameralib = False
@@ -29,15 +33,17 @@ MIN_ANGLE = 36
 class Camera:
     def __init__(self, firebase: Firebase = None):
         self._firebase = firebase
+        self._motion_dector = MotionDetector()
         # init camera
         if cameralib:
             self._camera = PiCamera()
             self._camera.resolution = (1024, 768)
-            self._detect_motion = True
             print("camera initialized")
         else:
             print("Pi camera not detected!")
             self._camera = None
+
+        self._detect_motion = True
 
         # init camera motor
         # this needs to be available regardless if
@@ -80,12 +86,18 @@ class Camera:
             self._frame_lock.wait()
 
     def _capture_loop(self):
+        """
+        Capture a frame 4 times a second. After each capture, check for
+        movement
+        """
         while True:
             start_time = time.time()
             with self._frame_lock:
-                movement = self._capture_frame()
-                if movement and self._firebase is not None:
-                    self._firebase.send_movement_push_notification()
+                self._capture_frame()
+                if self._detect_motion and self._motion_dector.motion_detected(
+                        10):
+                    if self._firebase is not None:
+                        self._firebase.send_movement_push_notification()
                 self._frame_lock.notify_all()
 
             delta = time.time() - start_time
@@ -102,8 +114,11 @@ class Camera:
             # capture it
             self._camera.capture(IMG_PATH)
             self._frame = cv2.imread(IMG_PATH)
-        movement_detected = False  # TODO
-        return movement_detected
+
+            if self._detect_motion:
+                self._motion_dector.analyze_frame(self._frame)
+            else:
+                self._motion_dector.analyze_frame(None)
 
     def accumulate_angle(self, angle, direction):
         if direction == 1:
