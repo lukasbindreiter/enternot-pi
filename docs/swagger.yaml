@@ -160,11 +160,11 @@ definitions:
   Angle:
     type: "object"
     properties:
-      x-angle:
+      x_angle:
         type: "number"
         description: "X angle (left/right) in degrees, from -180 to 180"
         example: 12.5
-      y-angle:
+      y_angle:
         type: "number"
         description: "Y angle (left/right) in degrees, from -180 to 180"
         example: -23.5

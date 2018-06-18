@@ -1,6 +1,5 @@
 import datetime
 import json
-import pickle
 
 import cv2
 from flask import Response, request, jsonify
@@ -29,19 +28,19 @@ def camera_position():
         x_angle = None
         y_angle = None
         try:
-            x_angle = data["x-angle"]
+            x_angle = data["x_angle"]
         except KeyError:
             pass
 
         try:
-            y_angle = data["y-angle"]
+            y_angle = data["y_angle"]
         except KeyError:
             pass
 
         if x_angle is None and y_angle is None:
             raise ValueError("Must specify at least x or y angle")
 
-        for angle, angle_name in [(x_angle, "x-angle"), (y_angle, "y-angle")]:
+        for angle, angle_name in [(x_angle, "x_angle"), (y_angle, "y_angle")]:
             if angle is None:
                 continue
             if not isinstance(angle, (float, int)):
