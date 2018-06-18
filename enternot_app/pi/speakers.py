@@ -1,6 +1,7 @@
 import os
 import pygame
 import pydub
+from pydub.playback import play
 
 # how long the siren sound will be played by default (time in seconds)
 SIREN_PLAYBACK_DURATION = 3 * 60
@@ -44,9 +45,7 @@ class Speakers:
         audio = pydub.AudioSegment(data=data, sample_width=sample_width,
                                    frame_rate=frame_rate, channels=channels)
 
-        audio.export(self._recording_filename, format="wav")
-        pygame.mixer.music.load(self._recording_filename)
-        pygame.mixer.music.play()
+        play(audio)
 
     def stop_playback(self):
         if not self._audio_device:

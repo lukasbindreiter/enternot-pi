@@ -4,19 +4,19 @@ from flask.testing import FlaskClient
 
 
 def test_camera_position(client: FlaskClient):
-    data = json.dumps({"x-angle": 12.5})
+    data = json.dumps({"x_angle": 12.5})
     response = client.post("/camera/position",
                            data=data,
                            content_type='application/json')
     assert response.status_code == 200
 
-    data = json.dumps({"y-angle": 180})
+    data = json.dumps({"y_angle": 180})
     response = client.post("/camera/position",
                            data=data,
                            content_type='application/json')
     assert response.status_code == 200
 
-    data = json.dumps({"x-angle": 12.5, "y-angle": -180})
+    data = json.dumps({"x_angle": 12.5, "y_angle": -180})
     response = client.post("/camera/position",
                            data=data,
                            content_type='application/json')
@@ -46,13 +46,13 @@ def camera_position_bad_requests(client: FlaskClient):
                            content_type='application/json')
 
     # invalid angle values
-    data = json.dumps({"x-angle": -190})
+    data = json.dumps({"x_angle": -190})
     response = client.post("/camera/position",
                            data=data,
                            content_type='application/json')
     assert response.status_code == 400
 
-    data = json.dumps({"y-angle": 190})
+    data = json.dumps({"y_angle": 190})
     response = client.post("/camera/position",
                            data=data,
                            content_type='application/json')
