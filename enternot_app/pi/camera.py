@@ -114,7 +114,7 @@ class Camera:
         else:  # running on the raspi:
             # capture it
             self._camera.capture(IMG_PATH)
-            self._frame = cv2.imread(IMG_PATH)
+            self._frame = cv2.read(IMG_PATH)
 
             if self._detect_motion:
                 self._motion_dector.analyze_frame(self._frame)
