@@ -31,7 +31,7 @@ MIN_ANGLE = 36
 
 
 class Camera:
-    def __init__(self, firebase: Firebase = None):
+    def __init__(self, firebase = None):
         self._firebase = firebase
         self._motion_dector = MotionDetector()
         # init camera
