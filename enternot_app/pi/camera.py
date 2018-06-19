@@ -67,14 +67,14 @@ class Camera:
         # set daemon to true to kill this thread when the main flask
         # thread exists
         self._capture_thread = Thread(target=self._capture_loop,
-                                      name="Camera-Capture-Thread",
-                                      daemon=True)
+                                      name="Camera-Capture-Thread")
+        self._capture_thread.daemon = True
         self._capture_thread.start()
 
         if self._pwm is not None:
             self._move_thread = Thread(target=self._move_loop,
-                                       name="Camera-Move-Thread",
-                                       daemon=True)
+                                       name="Camera-Move-Thread")
+            self._move_thread.daemon = True
             self._move_thread.start()
 
     @property
