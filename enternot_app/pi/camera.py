@@ -31,7 +31,7 @@ MIN_ANGLE = 36
 
 
 class Camera:
-    def __init__(self, firebase = None):
+    def __init__(self, firebase=None):
         self._firebase = firebase
         self._motion_dector = MotionDetector()
         # init camera
@@ -72,10 +72,15 @@ class Camera:
         self._capture_thread.start()
 
         if self._pwm is not None:
-            self._move_thread = Thread(target=self._move_loop,
-                                       name="Camera-Move-Thread")
-            self._move_thread.daemon = True
-            self._move_thread.start()
+            self._move_thread_left = Thread(target=self._move_loop_x,
+                                            name="Camera-Move-Thread-x")
+            self._move_thread_left.daemon = True
+            self._move_thread_left.start()
+
+            self._move_thread_up = Thread(target=self._move_loop_y,
+                                          name="Camera-Move-Thread-y")
+            self._move_thread_up.daemon = True
+            self._move_thread_up.start()
 
     @property
     def frame(self):
@@ -127,19 +132,23 @@ class Camera:
         else:
             self._up_down_angle += angle
 
-    def _move_loop(self):
+    def _move_loop_x(self):
+        while True:
+            if self._left_right_angle >= MIN_ANGLE:
+                self._left_right_angle -= MIN_ANGLE
+                self.move(MIN_ANGLE, 1)
+            if self._left_right_angle <= MIN_ANGLE * -1:
+                self._left_right_angle += MIN_ANGLE
+                self.move(MIN_ANGLE * -1, 1)
+            time.sleep(0.5)
+
+    def _move_loop_y(self):
         while True:
             if self._up_down_angle >= MIN_ANGLE:
                 self._up_down_angle -= MIN_ANGLE
                 self.move(MIN_ANGLE, 2)
             if self._up_down_angle <= MIN_ANGLE * -1:
                 self._up_down_angle += MIN_ANGLE
-                self.move(MIN_ANGLE * -1, 2)
-            if self._left_right_angle >= MIN_ANGLE:
-                self._left_right_angle -= MIN_ANGLE
-                self.move(MIN_ANGLE, 1)
-            if self._left_right_angle <= MIN_ANGLE * -1:
-                self._left_right_angle += MIN_ANGLE
                 self.move(MIN_ANGLE * -1, 2)
             time.sleep(0.5)
 
