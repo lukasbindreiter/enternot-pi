@@ -1,8 +1,7 @@
 from math import sin, cos, sqrt, atan2, radians
 
 
-def calculate_distance(lon1: float, lat1: float, lon2: float,
-                       lat2: float) -> float:
+def calculate_distance(lon1, lat1, lon2, lat2):
     """
     Calculate the distance in meters between the two given geo locations.
 
